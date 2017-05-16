@@ -1,0 +1,46 @@
+/*用迭代器与组合模式对二叉树进行遍历。
+
+    迭代器的作用在于对数据的遍历与数据的内部表示进行了分离。通过迭代器，我们知道调用hasNext()来确认是否还有下一个元素。如果有，那么就可以调用next()取得下一个元素。至于数据内部如何表示，我们并不关心。我们关心的只是能以一种预先定义的顺序来访问每个元素。
+
+    组合模式用来表示一个节点内部包含若干个其它的节点，而被包含的节点同样也可以再包含另外的节点。因此是一种递归的结构。不包含其他节点的节点叫做叶子节点，这通常是递归的终结点。树形结构比较适合用来说明组合模式。 
+
+
+广度优先代码：
+*/
+public class BreadthFirstIterator implements Iterator<Node> {
+    private Queue<Iterator<Node>> queue = new LinkedList<Iterator<Node>>();
+    public BreadthFirstIterator(Iterator<Node> it) {
+        queue.offer(it);
+    }
+    public boolean hasNext() {
+        if (queue.isEmpty()) {
+            return false;
+        } else {
+            Iterator<Node> it = queue.peek();
+            if (it.hasNext()) {
+                return true;
+            } else {
+                queue.poll();
+                return hasNext();
+            }
+        }
+    }
+    public Node next() {
+        if (hasNext()) {
+            Iterator<Node> it = queue.peek();
+            Node next = it.next();
+            if (next instanceof BranchNode) {
+                queue.offer(next.iterator());
+            }
+            return next;
+        } else {
+            return null;
+        }
+    }
+    public void remove() {
+        throw new UnsupportedOperationException("Can't remove node, yet");
+    }
+}
+
+
+
